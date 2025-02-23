@@ -16,7 +16,8 @@ CompileFlags:
     -Wswitch-default,
     -Wswitch-enum,
     -Wconversion,
-    -Wunreachable-code
+    -Wunreachable-code,
+    -Wvla
     --std=gnu17
     ]
   Compiler: clang

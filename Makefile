@@ -17,6 +17,7 @@ WARNFLAGS=\
     -Wswitch-default\
     -Wswitch-enum\
     -Wconversion\
+    -Wvla\
     -Wunreachable-code\
     --std=gnu17
 
@@ -31,6 +32,6 @@ clean:
 	rm -f ./*.o
 
 $(EXENAME): libs
-	cc $(LIBS) $(CCFLAGS) $(WARNFLAGS) ./main.c
+	cc $(LIBS) $(CCFLAGS) $(WARNFLAGS) -o $(EXENAME)
 libs:
 	cc $(CCFLAGS) $(WARNFLAGS) -c *.c

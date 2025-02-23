@@ -1,4 +1,1 @@
-#include <stdio.h>
-int main(void) {
-  printf("a\n");
-}
+int main(void) {}
