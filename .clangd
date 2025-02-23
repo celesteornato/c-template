@@ -20,4 +20,3 @@ CompileFlags:
     -Wvla
     --std=gnu17
     ]
-  Compiler: clang
