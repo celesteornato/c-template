@@ -17,6 +17,7 @@ CompileFlags:
     -Wswitch-enum,
     -Wconversion,
     -Wunreachable-code,
-    -Wvla
-    --std=gnu17
+    -Wvla,
+    -xc,
+    --std=c17
     ]

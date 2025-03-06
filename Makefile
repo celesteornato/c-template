@@ -1,4 +1,3 @@
-CCFLAGS=-O2
 WARNFLAGS=\
     -Wall\
     -Wextra\
@@ -18,20 +17,42 @@ WARNFLAGS=\
     -Wswitch-enum\
     -Wconversion\
     -Wvla\
-    -Wunreachable-code\
-    --std=gnu17
+    -Wunreachable-code
+CCFLAGS=-O2 --std=c17
 
-LIBS=*.o
-EXENAME=out
-.PHONY: all clean
+EXENAME = out
+MAIN = main.c
 
-all: out
+# BSD Make, GNU Make
+LIBS := ${:!ls libs/*.c!}
+LIBS += $(shell libs/*.c)
+
+# BSD Make, GNU Make
+OBJ := ${LIBS:S/.c/.o/g}
+OBJ += $(patsubst %.c,%.o,$(wildcard libs/*.c))
+
+# Separate debug c-compiler, fuzzing assumes clang
+DBGCC=clang
+DBGFLAGS=$(CCFLAGS) $(WARNFLAGS) -g -fsanitize=fuzzer,undefined
+DBGDIR=debug
+DBGLIB=$(DBGDIR)/debug.c
+
+.SUFFIXES: .o .c
+.PHONY: all clean debug
+
+all: $(EXENAME)
 
 clean:
-	rm -f ./$(EXENAME)
-	rm -f ./*.o
+	rm -f $(EXENAME)
+	rm -f $(OBJ)
+	rm -f $(DBGDIR)/*.o
+	rm -f $(DBGDIR)/*.dbg
 
-$(EXENAME): libs
-	cc $(LIBS) $(CCFLAGS) $(WARNFLAGS) -o $(EXENAME)
-libs:
-	cc $(CCFLAGS) $(WARNFLAGS) -c *.c
+$(EXENAME): $(OBJ)
+	cc $(OBJ) $(MAIN) $(CCFLAGS) $(WARNFLAGS) -o $(EXENAME)
+
+.c.o:
+	cc $(CCFLAGS) $(WARNFLAGS) -c $< -o $@
+
+debug:
+	$(DBGCC) $(OBJ) $(DBGFLAGS) -o $(DBGDIR)/$(EXENAME).dbg
