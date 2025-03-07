@@ -18,6 +18,7 @@ WARNFLAGS=\
     -Wconversion\
     -Wvla\
     -Wunreachable-code
+
 CCFLAGS=-O2 --std=c17
 
 EXENAME = out
@@ -25,11 +26,11 @@ MAIN = main.c
 
 # BSD Make, GNU Make
 LIBS := ${:!ls libs/*.c!}
-LIBS += $(shell libs/*.c)
+LIBS += $(wildcard libs/*.c)
 
 # BSD Make, GNU Make
 OBJ := ${LIBS:S/.c/.o/g}
-OBJ += $(patsubst %.c,%.o,$(wildcard libs/*.c))
+OBJ += $(patsubst %.c,%.o,$(LIBS))
 
 # Separate debug c-compiler, fuzzing assumes clang
 DBGCC=clang

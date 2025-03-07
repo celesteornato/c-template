@@ -1,1 +1,2 @@
-int test(void) {return 0;}
+void _(void)
+{}
