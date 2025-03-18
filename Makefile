@@ -1,4 +1,7 @@
-WARNFLAGS=\
+.PHONY: all clean debug
+.SUFFIXES: .o .c
+
+WARNS=\
     -Wall\
     -Wextra\
     -Wpedantic\
@@ -19,41 +22,39 @@ WARNFLAGS=\
     -Wvla\
     -Wunreachable-code
 
-CCFLAGS=-O2 --std=c17
+CFLAGS+=-O2 --std=c17
 
-EXENAME = out
-MAIN = main.c
-
-# BSD Make, GNU Make
-LIBS := ${:!ls libs/*.c!}
-LIBS += $(wildcard libs/*.c)
+OUTDIR=bin
+EXE=$(OUTDIR)/out
 
 # BSD Make, GNU Make
-OBJ := ${LIBS:S/.c/.o/g}
-OBJ += $(patsubst %.c,%.o,$(LIBS))
+SRCS:=${:!find . -name '*.c'!}
+SRCS?=$(wildcard *.c)
 
-# Separate debug c-compiler, fuzzing assumes clang
-DBGCC=clang
-DBGFLAGS=$(CCFLAGS) $(WARNFLAGS) -g -fsanitize=fuzzer,undefined
-DBGDIR=debug
-DBGLIB=$(DBGDIR)/debug.c
+ASMSRCS:=${:!find . -name '*.s'!}
+ASMSRCS?=$(wildcard *.s)
 
-.SUFFIXES: .o .c
-.PHONY: all clean debug
+# BSD Make, GNU Make
+OBJ=${SRCS:S/.c/.o/g}
+OBJ?=$(patsubst %.c,%.o,$(SRCS))
 
-all: $(EXENAME)
+OBJ+=${ASMSRCS:S/.s/.o/g}
+OBJ+=$(patsubst %.s,%.o,$(ASMSRCS))
+
+DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined
+
+all: $(EXE)
 
 clean:
-	rm -f $(EXENAME)
+	rm -rf $(OUTDIR)/*
 	rm -f $(OBJ)
-	rm -f $(DBGDIR)/*.o
-	rm -f $(DBGDIR)/*.dbg
 
-$(EXENAME): $(OBJ)
-	cc $(OBJ) $(MAIN) $(CCFLAGS) $(WARNFLAGS) -o $(EXENAME)
+$(EXE): $(OBJ)
+	cc $(OBJ) $(CFLAGS) $(WARNS) -o $(EXE)
+debug:
+	cc $(OBJ) $(DBGFLAGS) -o $(EXE).dbg
 
 .c.o:
-	cc $(CCFLAGS) $(WARNFLAGS) -c $< -o $@
-
-debug:
-	$(DBGCC) $(OBJ) $(DBGFLAGS) -o $(DBGDIR)/$(EXENAME).dbg
+	cc $(CFLAGS) $(WARNS) -c $< -o $@
+.s.o:
+	cc -c $< -o $@
