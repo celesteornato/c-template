@@ -1,5 +1,5 @@
 .PHONY: all clean debug
-.SUFFIXES: .o .c
+.SUFFIXES: .o .c .S .s 
 
 WARNS=\
     -Wall\
@@ -31,17 +31,17 @@ EXE=$(OUTDIR)/out
 SRCS:=${:!find . -name '*.c'!}
 SRCS?=$(wildcard *.c)
 
-ASMSRCS:=${:!find . -name '*.s'!}
-ASMSRCS?=$(wildcard *.s)
+ASMSRCS:=${:!find . -name '*.S'!}
+ASMSRCS?=$(wildcard *.S)
 
 # BSD Make, GNU Make
 OBJ=${SRCS:S/.c/.o/g}
 OBJ?=$(patsubst %.c,%.o,$(SRCS))
 
-OBJ+=${ASMSRCS:S/.s/.o/g}
-OBJ+=$(patsubst %.s,%.o,$(ASMSRCS))
+OBJ+=${ASMSRCS:S/.S/.o/g}
+OBJ+=$(patsubst %.S,%.o,$(ASMSRCS))
 
-DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined,bounds-strict
+DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined
 
 all: $(EXE)
 
@@ -51,8 +51,10 @@ clean:
 
 $(EXE): $(OBJ)
 	cc $(OBJ) $(CFLAGS) $(WARNS) -o $(EXE)
-debug:
-	cc $(OBJ) $(DBGFLAGS) -o $(EXE).dbg
+
+debug: $(OBJ)
+	cc $(OBJ) $(DBGFLAGS) $(WARNS) -o $(EXE).dbg
+	cc $(SRCS) $(ASMSRCS)$(WARNS) -g -S -o $(EXE).s
 
 .c.o:
 	cc $(CFLAGS) $(WARNS) -c $< -o $@
