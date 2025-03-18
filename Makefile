@@ -41,7 +41,7 @@ OBJ?=$(patsubst %.c,%.o,$(SRCS))
 OBJ+=${ASMSRCS:S/.s/.o/g}
 OBJ+=$(patsubst %.s,%.o,$(ASMSRCS))
 
-DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined
+DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined,bounds-strict
 
 all: $(EXE)
 
