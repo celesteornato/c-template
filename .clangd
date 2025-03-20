@@ -2,6 +2,7 @@ CompileFlags:
   Add: [
     -Wall, -Wextra,
     -Wpedantic,
+    -Wno-empty-translation-unit,
     -Wunused,
     -Wunused,
     -Wfloat-equal,
