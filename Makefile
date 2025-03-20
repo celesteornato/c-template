@@ -54,7 +54,6 @@ $(EXE): $(OBJ)
 
 debug: $(OBJ)
 	cc $(OBJ) $(DBGFLAGS) $(WARNS) -o $(EXE).dbg
-	cc $(SRCS) $(ASMSRCS)$(WARNS) -g -S -o $(EXE).s
 
 .c.o:
 	cc $(CFLAGS) $(WARNS) -c $< -o $@
