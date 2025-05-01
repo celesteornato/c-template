@@ -29,16 +29,14 @@ EXE=$(OUTDIR)/out
 
 # BSD Make, GNU Make
 SRCS:=${:!find . -name '*.c'!}
-SRCS?=$(wildcard *.c)
-
-ASMSRCS:=${:!find . -name '*.S'!}
-ASMSRCS?=$(wildcard *.S)
-
-# BSD Make, GNU Make
 OBJ=${SRCS:S/.c/.o/g}
-OBJ?=$(patsubst %.c,%.o,$(SRCS))
-
 OBJ+=${ASMSRCS:S/.S/.o/g}
+ASMSRCS:=${:!find . -name '*.S'!}
+
+
+SRCS?=$(wildcard *.c)
+ASMSRCS?=$(wildcard *.S)
+OBJ?=$(patsubst %.c,%.o,$(SRCS))
 OBJ+=$(patsubst %.S,%.o,$(ASMSRCS))
 
 DBGFLAGS=$(CFLAGS) $(WARNS) -g -fsanitize=address,undefined

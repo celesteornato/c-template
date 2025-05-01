@@ -4,7 +4,6 @@ CompileFlags:
     -Wpedantic,
     -Wno-empty-translation-unit,
     -Wunused,
-    -Wunused,
     -Wfloat-equal,
     -Wundef,
     -Wshadow,
